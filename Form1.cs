@@ -40,6 +40,7 @@ namespace Praktika
             cancelAddRecordBtn = createCancelAddRecordBtn();
             setShowAddRecordBtns(false);
             setShowAcceptEditBtn(false);
+            
             isLoad = false;
 
         }
@@ -124,22 +125,21 @@ namespace Praktika
             dataGridView2.Show();
         }
         
-        private void showDeleteBtn()
+        private void setShowDeleteBtn(bool isShow)
         {
-            Console.WriteLine("SHOW DELETE BTN");
-            deleteBtn.Show();
+            if (isShow)
+            {
+                deleteBtn.Show();
+            }
+            else
+            {
+                deleteBtn.Hide();    
+            }
         }
-
-        private void hideDeleteBtn()
-        {
-            Console.WriteLine("HIDE DELETE BTN");
-            deleteBtn.Hide();
-        }
-        
         private void Form1_Load(object sender, EventArgs e)
         {
             label1.Text = "";
-            hideDeleteBtn();
+            setShowDeleteBtn(false);
             
         }
 
@@ -196,7 +196,7 @@ namespace Praktika
             setShowCancelAddRecordBtn(isShow);
             setShowAcceptAddRecordBtn(isShow);
         }
-
+        
         private void select_data_from_db_and_display_datagrid(string query)
         {
             OleDbConnection connection = new OleDbConnection(connectionString);
@@ -214,13 +214,14 @@ namespace Praktika
 
                 // Привязка набора данных к компоненту DataGridView
                 dataGridView1.DataSource = dataset.Tables[0];
-                // connection.Close();
+                connection.Close();
             }
 
         }
 
         private void create_empty_copy_current_table_in_datagrid2()
         {
+            setShowDeleteBtn(false);
             Console.WriteLine("SELECT DATA FROM DB AND DISPLAY DATA GRID");
             string query = "SELECT TOP 1 * FROM " + currentTable;
             OleDbConnection connection = new OleDbConnection(connectionString);
@@ -235,8 +236,10 @@ namespace Praktika
                 OleDbDataAdapter adapter = new OleDbDataAdapter(command);
                 DataSet dataset = new DataSet();
                 adapter.Fill(dataset);
+                Console.WriteLine($"{dataset.Tables[0].Rows[0].ItemArray[0]}");
                 dataset.Clear();
                 dataGridView2.DataSource = dataset.Tables[0];
+                dataGridView2.Columns[0].ReadOnly = true;
             }
         }
 
@@ -300,15 +303,17 @@ namespace Praktika
 
         private void interview_table_Click(object sender, EventArgs e)
         {
-            if(!isLoad)
+            if (!isLoad)
             {
                 setLoadFormState(true);
                 enableTableBtns(false);
                 string selectedTable = "interview";
                 currentTable = selectedTable;
-                string query = "SELECT * FROM interview";
+                string query = $"SELECT * FROM {selectedTable}";
                 select_data_from_db_and_display_datagrid(query);
                 create_empty_copy_current_table_in_datagrid2();
+                showDataGrid1();
+                showDataGrid2();
                 enableTableBtns(true);
                 setShowAddRowBtn(true);
                 setLoadFormState(false);
@@ -336,11 +341,12 @@ namespace Praktika
         private void dataGridView1_MouseClick(object sender, MouseEventArgs e)
         {
             Console.WriteLine("DATA GRIED VIEW 1: CLICK");
+            setShowAddRecordBtns(false);
+            setShowAddRowBtn(true);
             currentState = state.EDIT;
             // Получаем индекс выбранной строки в dataGridView1
             int selectedRowIndex = dataGridView1.CurrentCell.RowIndex;
             Console.WriteLine(dataGridView2.Rows.Count);
-
             // Проверяем, что строка выбрана
             if (selectedRowIndex >= 0)
             {
@@ -357,8 +363,8 @@ namespace Praktika
                 DataRow targetRow = copy_row_value(sourceRow, targetDataTable.NewRow());
                                
                 targetDataTable.Rows.InsertAt(targetRow, 1);
-                
-                showDeleteBtn();
+
+                setShowDeleteBtn(true);
             }
         }
 
@@ -374,24 +380,7 @@ namespace Praktika
         
         
         // DATA GRID 2 EVENTS
-               
-        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            Console.WriteLine($"dataGridView2_CellValueChanged".ToUpper());
-                        
-            // if (dataGridView2.Rows.Count > 1)
-            // {
-            
-            // }
-            
-        }
-
-        private void dataGridView2_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
-        {
-            Console.WriteLine($"dataGridView2_CellValidating".ToUpper());
-            Type columnType = dataGridView2.Columns[e.ColumnIndex].ValueType;
-            Console.WriteLine($"{columnType}");
-        }
+        
         
         private void dataGridVIew2_DataError(object? sender, DataGridViewDataErrorEventArgs e)
         {
@@ -429,107 +418,54 @@ namespace Praktika
             DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
             targetDataTable.Rows.Clear();
         }
-        
-        
+
+
+        private int get_last_not_empty_row_id(DataGridView targetDataTable)
+        {
+            int lastIdRow = targetDataTable.Rows.Count - 1;
+            while (IsRowEmpty(targetDataTable.Rows[lastIdRow]))
+            {
+                lastIdRow -= 1;
+            }
+
+            return lastIdRow;
+        }
+
+        private void fill_dgv2_new_last_index_row_db()
+        {
+            DataTable sorceDataTable = (DataTable)dataGridView1.DataSource;
+            DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
+            int lastIdNotEmptyRow = get_last_not_empty_row_id(dataGridView1);
+            double newLastIdx = Convert.ToDouble(sorceDataTable.Rows[lastIdNotEmptyRow].ItemArray.GetValue(0)) + 1;
+            dataGridView2.Rows[0].Cells[0].Value = newLastIdx;
+        }
 
         private void addRowBtn_Click(object sender, EventArgs e)
         {
             // TODO
             currentState = state.ADD;
-            hideDeleteBtn();
+            setLoadFormState(true);
+            setShowDeleteBtn(false);
             setShowAcceptEditBtn(false);
             clear_dataGridView2();
             setShowAddRowBtn(false);
             setShowAddRecordBtns(true);
+            setLoadFormState(false);
             
         }
         
-        private bool IsRowEmpty(DataGridViewRow row)
-        {
-            foreach (DataGridViewCell cell in row.Cells)
-            {
-                if (string.IsNullOrWhiteSpace(cell.Value?.ToString()))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private string generate_insert_row_query(DataTable targetDataTable)
-        {
-            string query = $"INSERT INTO {currentTable} (";
-            string values = ") VALUES (";
-            int countColumns = targetDataTable.Columns.Count;
-            
-            string idColumnName = targetDataTable.Columns[0].ColumnName;
-            for (int i = 0; i <countColumns ; i++)
-            {
-                DataColumn column = targetDataTable.Columns[i];
-
-                query += $"{column.ColumnName}";
-                values += $"@{column.ColumnName}";
-                
-                if (i != countColumns - 1)
-                {
-                    query += ", ";
-                    values += ", ";
-                }
-                else
-                {
-                    values += ")";
-                }
-
-            }
-            
-            return query + values;
-        }
-
-        private void updateDataFromDataGrids()
-        {
-            select_data_from_db_and_display_datagrid($"SELECT * FROM {currentTable}");
-            clear_dataGridView2();
-        }
-
-        private void insert_new_row_form_datagridview2_to_db(DataTable targetDataTable)
-        {
-            throw new NotImplementedException("ADD INSERT");
-            string insertQuery = generate_insert_row_query(targetDataTable);
-            Console.WriteLine(insertQuery);
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
-            {
-                // Создаем команду для выполнения запроса
-                OleDbCommand command = new OleDbCommand(insertQuery, connection);
-            
-                // Привязываем параметры к команде
-                for (int i = 0; i < targetDataTable.Columns.Count; i++)
-                {                    
-                    command.Parameters.AddWithValue($"@{targetDataTable.Columns[i].ColumnName}", targetDataTable.Rows[0].ItemArray[i]);
-                }
-                                            
-                // Открываем соединение и выполняем запрос
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-            
-                // Выводим сообщение об успешном обновлении
-                MessageBox.Show($"Строка успешно добавлена");
-            }
-
-
-        }
-
         private void acceptAddRecordBtn_Click(object sender, EventArgs e)
         {
             setLoadFormState(true);
             DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
             DataGridViewRow rowToAdded = dataGridView2.Rows[0];
+            // fill_dgv2_new_last_index_row_db();
             if (!IsRowEmpty(rowToAdded))
             {
                 try
                 {
                     insert_new_row_form_datagridview2_to_db(targetDataTable);
                     updateDataFromDataGrids();
-
                 }
                 catch (Exception ex)
                 {
@@ -557,6 +493,93 @@ namespace Praktika
             setShowAddRowBtn(true);
             currentState = state.INIT;
         }
+        
+        private bool IsRowEmpty(DataGridViewRow row)
+        {
+            
+            for (int i = 1; i < row.Cells.Count - 1; i++)
+            {
+                DataGridViewCell cell = row.Cells[i];
+                if (string.IsNullOrWhiteSpace(cell.Value?.ToString()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            // foreach (DataGridViewCell cell in row.Cells)
+            // {
+            //     if (string.IsNullOrWhiteSpace(cell.Value?.ToString()))
+            //     {
+            //         return true;
+            //     }
+            //     
+            // }
+            // return false;
+        }
+
+        private string generate_insert_row_query(DataTable targetDataTable)
+        {
+            string query = $"INSERT INTO {currentTable} (";
+            string values = ") VALUES (";
+            int countColumns = targetDataTable.Columns.Count;
+            
+            for (int i = 1; i <countColumns ; i++)
+            {
+                DataColumn column = targetDataTable.Columns[i];
+
+                query += $"{column.ColumnName}";
+                values += $"@{column.ColumnName}";
+                
+                if (i != countColumns - 1)
+                {
+                    query += ", ";
+                    values += ", ";
+                }
+                else
+                {
+                    values += ")";
+                }
+
+            }
+            
+            return query + values;
+        }
+
+        private void updateDataFromDataGrids()
+        {
+            select_data_from_db_and_display_datagrid($"SELECT * FROM {currentTable}");
+            clear_dataGridView2();
+        }
+        private void insert_new_row_form_datagridview2_to_db(DataTable targetDataTable)
+        {
+            // throw new NotImplementedException("ADD INSERT");
+            string insertQuery = generate_insert_row_query(targetDataTable);
+            Console.WriteLine(insertQuery);
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                // Создаем команду для выполнения запроса
+                OleDbCommand command = new OleDbCommand(insertQuery, connection);
+            
+                // Привязываем параметры к команде
+                for (int i = 1; i < targetDataTable.Columns.Count; i++)
+                {                    
+                    Console.WriteLine($"@{targetDataTable.Columns[i].ColumnName} = {targetDataTable.Rows[0].ItemArray[i]}");
+                    command.Parameters.AddWithValue($"@{targetDataTable.Columns[i].ColumnName}", targetDataTable.Rows[0].ItemArray[i]);
+                }
+                                            
+                // Открываем соединение и выполняем запрос
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+            
+                // Выводим сообщение об успешном обновлении
+                MessageBox.Show($"Строка успешно добавлена: {rowsAffected}");
+            }
+
+
+        }
+
+        
         
         private bool deleteRecord(int recordId, string idColumnName)
         {
