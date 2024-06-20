@@ -27,6 +27,14 @@ namespace Praktika
             hideDataGrid2();
             addRowBtn.Hide();
             dataGridView1.ReadOnly = true;
+            Button acceptEditBtn = new Button();
+            acceptEditBtn.Name = "acceptEditBtn";
+            acceptEditBtn.Text = "принять изменения";
+            acceptEditBtn.Location = new Point(deleteBtn.Location.X, deleteBtn.Location.Y+30);
+            acceptEditBtn.Size = new Size(deleteBtn.Size.Width, deleteBtn.Size.Height+20);
+            acceptEditBtn.Click += acceptEditBtn_Click;
+            this.Controls.Add(acceptEditBtn);
+            showAcceptEditBtn(false);
             isLoad = false;
 
         }
@@ -91,6 +99,18 @@ namespace Praktika
             label1.Text = "";
             hideDeleteBtn();
             
+        }
+
+        private void showAcceptEditBtn(bool isShow)
+        {
+            if(isShow)
+            {
+                this.Controls.Find("acceptEditBtn", false)[0].Show();
+            }
+            else
+            {
+                this.Controls.Find("acceptEditBtn", false)[0].Hide();
+            }
         }
 
         private void select_data_from_db_and_display_datagrid(string query)
@@ -302,13 +322,8 @@ namespace Praktika
         private void dataGridView2_CellEndEdit(object? sender, DataGridViewCellEventArgs e)
         {
             Console.WriteLine("dataGridView2_CellEndEdit".ToUpper());
-            Button acceptEditBtn = new Button();
-            acceptEditBtn.Name = "acceptEditBtn";
-            acceptEditBtn.Text = "принять изменения";
-            acceptEditBtn.Location = new Point(deleteBtn.Location.X, deleteBtn.Location.Y+30);
-            acceptEditBtn.Size = new Size(deleteBtn.Size.Width, deleteBtn.Size.Height+20);
-            acceptEditBtn.Click += acceptEditBtn_Click;
-            this.Controls.Add(acceptEditBtn);
+            showAcceptEditBtn(true);
+
         }
         
         
@@ -383,18 +398,78 @@ namespace Praktika
             setLoadFormState(false);
             
         }
+        
+        private string generate_row_query(DataTable targetDataTable)
+        {
+            
+            string query = $"UPDATE {currentTable} SET ";
+            int countColumns = targetDataTable.Columns.Count;
+            string idColumnName = targetDataTable.Columns[0].ColumnName;
+            for (int i = 1; i <countColumns ; i++)
+            {
+                DataColumn column = targetDataTable.Columns[i];
+                
+                    query += $"{column.ColumnName} = @{column.ColumnName}";
+                    if (i < countColumns - 1)
+                    {
+                        query += ", ";
+                    }
+            }
+            query += $" WHERE {idColumnName} = @{idColumnName}";
 
+            return query;
+        }
+        
         private void update_current_row_in_db()
         {
-            // TODO(ADD UPDATE ROW IN DB);
-            throw new NotImplementedException("ADD UPDATE ROW IN DB");
+            // string query = "UPDATE Users SET Name = @Name, Email = @Email WHERE ID = @Id";
+            DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
+            string query = generate_row_query(targetDataTable);
+            Console.WriteLine(query);
+            
+            
+            
+            // Создаем подключение к базе данных
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                // Создаем команду для выполнения запроса
+                OleDbCommand command = new OleDbCommand(query, connection);
+            
+                // Привязываем параметры к команде
+                for (int i = 1; i < targetDataTable.Columns.Count; i++)
+                {                    
+                    command.Parameters.AddWithValue($"@{targetDataTable.Columns[i].ColumnName}", targetDataTable.Rows[0].ItemArray[i]);
+                }
+                command.Parameters.AddWithValue($"@{targetDataTable.Columns[0].ColumnName}", targetDataTable.Rows[0].ItemArray[0]);
+                            
+                // Открываем соединение и выполняем запрос
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+            
+                // Выводим сообщение об успешном обновлении
+                MessageBox.Show($"Строка успешно обновлена");
+            }
+
         }
 
         private void acceptEditBtn_Click(object sender, EventArgs e)
         {
             Console.WriteLine($"acceptEditBtn_Click".ToUpper());
-            update_current_row_in_db();
-
+            try
+            {
+                setLoadFormState(true);
+                update_current_row_in_db();
+                clear_dataGridView2();
+                select_data_from_db_and_display_datagrid($"SELECT * FROM {currentTable}");
+                showAcceptEditBtn(false);
+                setLoadFormState(false);
+                
+            }
+            catch (Exception ex)
+            {        
+                Console.WriteLine(ex.StackTrace);
+                MessageBox.Show($"Ошибка: {ex.Message}");
+            }
         }
 
 
