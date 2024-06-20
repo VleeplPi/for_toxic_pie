@@ -113,6 +113,9 @@
             dataGridView2.Size = new Size(674, 67);
             dataGridView2.TabIndex = 6;
             dataGridView2.CellValueChanged += dataGridView2_CellValueChanged;
+       
+            
+            
             dataGridView2.CellValidating += dataGridView2_CellValidating;
             dataGridView2.DataError += dataGridVIew2_DataError;
             dataGridView2.CellEndEdit += dataGridView2_CellEndEdit;

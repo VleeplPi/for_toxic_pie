@@ -17,6 +17,8 @@ namespace Praktika
         private ProgressBar progressBar;
         private bool isLoad = true;
         private DataRow? selectedRowFromDGV1;
+        private Button acceptAddRecordBtn;
+        private Button cancelAddRecordBtn;
 
         public Form1()
         {
@@ -25,8 +27,19 @@ namespace Praktika
             this.BackColor = System.Drawing.Color.FromArgb(255, 244, 244, 244);
             hideDataGrid1();
             hideDataGrid2();
-            addRowBtn.Hide();
+            setShowAddRowBtn(false);
             dataGridView1.ReadOnly = true;
+            createAcceptEditBtn();
+            acceptAddRecordBtn = createAcceptAddRecordBtn();
+            cancelAddRecordBtn = createCancelAddRecordBtn();
+            setShowAddRecordBtns(false);
+            setShowAcceptEditBtn(false);
+            isLoad = false;
+
+        }
+
+        private void createAcceptEditBtn()
+        {
             Button acceptEditBtn = new Button();
             acceptEditBtn.Name = "acceptEditBtn";
             acceptEditBtn.Text = "прин€ть изменени€";
@@ -34,11 +47,34 @@ namespace Praktika
             acceptEditBtn.Size = new Size(deleteBtn.Size.Width, deleteBtn.Size.Height+20);
             acceptEditBtn.Click += acceptEditBtn_Click;
             this.Controls.Add(acceptEditBtn);
-            showAcceptEditBtn(false);
-            isLoad = false;
+        }
+
+        private Button createAcceptAddRecordBtn()
+        {
+            Button acceptAddRecordBtn = new Button();
+            acceptAddRecordBtn.Name = "acceptAddRecordBtn";
+            acceptAddRecordBtn.Text = "добавить запись";
+            acceptAddRecordBtn.Location = new Point(deleteBtn.Location.X, deleteBtn.Location.Y);
+            acceptAddRecordBtn.Size = new Size(deleteBtn.Size.Width, deleteBtn.Size.Height+20);
+            acceptAddRecordBtn.Click += acceptAddRecordBtn_Click;
+            this.Controls.Add(acceptAddRecordBtn);
+            return acceptAddRecordBtn;
+        }
+
+        private Button createCancelAddRecordBtn()
+        {
+            Button cancelAddRecordBtn = new Button();
+            cancelAddRecordBtn.Name = "cancelAddRecordBtn";
+            cancelAddRecordBtn.Text = "отмена";
+            cancelAddRecordBtn.Location = new Point(deleteBtn.Location.X, deleteBtn.Location.Y+50);
+            cancelAddRecordBtn.Size = new Size(deleteBtn.Size.Width, deleteBtn.Size.Height+20);
+            cancelAddRecordBtn.Click += cancelAddRecordBtn_Click;
+            this.Controls.Add(cancelAddRecordBtn);
+            return cancelAddRecordBtn;
 
         }
 
+      
         private void setLoadFormState(bool isLoad)
         {
             if(isLoad)
@@ -101,7 +137,19 @@ namespace Praktika
             
         }
 
-        private void showAcceptEditBtn(bool isShow)
+        private void setShowAddRowBtn(bool isShow)
+        {
+            if (isShow)
+            {
+                addRowBtn.Show();
+            }
+            else
+            {
+                addRowBtn.Hide();
+            }
+        }
+
+        private void setShowAcceptEditBtn(bool isShow)
         {
             if(isShow)
             {
@@ -111,6 +159,36 @@ namespace Praktika
             {
                 this.Controls.Find("acceptEditBtn", false)[0].Hide();
             }
+        }
+        
+        private void setShowAcceptAddRecordBtn(bool isShow)
+        {
+            if (isShow)
+            {
+                acceptAddRecordBtn.Show();
+            }
+            else
+            {
+                acceptAddRecordBtn.Hide();
+            }
+        }
+        
+        private void setShowCancelAddRecordBtn(bool isShow)
+        {
+            if (isShow)
+            {
+                cancelAddRecordBtn.Show();
+            }
+            else
+            {
+                cancelAddRecordBtn.Hide();
+            }
+        }
+
+        private void setShowAddRecordBtns(bool isShow)
+        {
+            setShowCancelAddRecordBtn(isShow);
+            setShowAcceptAddRecordBtn(isShow);
         }
 
         private void select_data_from_db_and_display_datagrid(string query)
@@ -170,6 +248,7 @@ namespace Praktika
                 showDataGrid1();
                 showDataGrid2();
                 enableTableBtns(true);
+                setShowAddRowBtn(true);
                 setLoadFormState(false);
             }
             
@@ -189,6 +268,7 @@ namespace Praktika
                 showDataGrid1();
                 showDataGrid2();
                 enableTableBtns(true);
+                setShowAddRowBtn(true);
                 setLoadFormState(false);
             }
         }
@@ -207,6 +287,7 @@ namespace Praktika
                 showDataGrid1();
                 showDataGrid2();
                 enableTableBtns(true);
+                setShowAddRowBtn(true);
                 setLoadFormState(false);
             }
         }
@@ -223,6 +304,7 @@ namespace Praktika
                 select_data_from_db_and_display_datagrid(query);
                 create_empty_copy_current_table_in_datagrid2();
                 enableTableBtns(true);
+                setShowAddRowBtn(true);
                 setLoadFormState(false);
             }
         }
@@ -239,6 +321,7 @@ namespace Praktika
                 select_data_from_db_and_display_datagrid(query);
                 create_empty_copy_current_table_in_datagrid2();
                 enableTableBtns(true);
+                setShowAddRowBtn(true);
                 setLoadFormState(false);
             }
         }
@@ -265,13 +348,7 @@ namespace Praktika
                 
                 targetDataTable.Rows.Clear();
                 DataRow targetRow = copy_row_value(sourceRow, targetDataTable.NewRow());
-                //  опируем значени€ €чеек из исходной строки в новую строку
-                // for (int i = 0; i < sourceRow.ItemArray.Length; i++)
-                // {
-                //     targetRow[i] = sourceRow[i];
-                // }
-                // ƒобавл€ем новую строку в целевой DataTable
-                
+                               
                 targetDataTable.Rows.InsertAt(targetRow, 1);
                 
                 showDeleteBtn();
@@ -288,12 +365,17 @@ namespace Praktika
             return targetRow;
         }
         
+        
+        // DATA GRID 2 EVENTS
                
         private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            Console.WriteLine($"dataGridView2_CellContentClick {e.RowIndex}".ToUpper());
-            Type cellType = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType();
-            Console.WriteLine($"{cellType}");
+            Console.WriteLine($"dataGridView2_CellValueChanged".ToUpper());
+                        
+            // if (dataGridView2.Rows.Count > 1)
+            // {
+            
+            // }
             
         }
 
@@ -314,7 +396,6 @@ namespace Praktika
             {
                 MessageBox.Show("упс, что-то пошло не так..");
             }
-
             dataGridView2.CancelEdit();
             e.Cancel = true;
         }
@@ -322,24 +403,46 @@ namespace Praktika
         private void dataGridView2_CellEndEdit(object? sender, DataGridViewCellEventArgs e)
         {
             Console.WriteLine("dataGridView2_CellEndEdit".ToUpper());
-            showAcceptEditBtn(true);
-
+            // dataGridView2.Rows.RemoveAt(dataGridView2.Rows.Count-1);
+            if (dataGridView2.Rows.Count > 1)
+            {
+                setShowAcceptEditBtn(true);
+            }
+            
+            
         }
         
+       
         
         private void clear_dataGridView2()
         {
             DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
             targetDataTable.Rows.Clear();
         }
+        
+        
 
         private void addRowBtn_Click(object sender, EventArgs e)
         {
-            
-            clear_dataGridView2();
             // TODO
+            hideDeleteBtn();
+            setShowAcceptEditBtn(false);
+            clear_dataGridView2();
+            setShowAddRowBtn(false);
+            setShowAddRecordBtns(true);
             
-            
+        }
+
+        private void acceptAddRecordBtn_Click(object sender, EventArgs e)
+        {
+            // TODO
+        }
+
+        private void cancelAddRecordBtn_Click(object sender, EventArgs e)
+        {
+            // TODO
+            setShowAddRecordBtns(false);
+            setShowAddRowBtn(true);
         }
         
         private bool deleteRecord(int recordId, string idColumnName)
@@ -461,7 +564,7 @@ namespace Praktika
                 update_current_row_in_db();
                 clear_dataGridView2();
                 select_data_from_db_and_display_datagrid($"SELECT * FROM {currentTable}");
-                showAcceptEditBtn(false);
+                setShowAcceptEditBtn(false);
                 setLoadFormState(false);
                 
             }
