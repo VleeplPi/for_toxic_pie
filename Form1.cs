@@ -16,6 +16,7 @@ namespace Praktika
         static string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=database\\baza.accdb";
         private ProgressBar progressBar;
         private bool isLoad = true;
+        private DataRow? selectedRowFromDGV1;
 
         public Form1()
         {
@@ -221,33 +222,8 @@ namespace Praktika
                 setLoadFormState(false);
             }
         }
-        private void dataGridView1_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
-        {
-            Debug.WriteLine("DATA GRID VIEW VALIDATE");
-        }
 
-
-        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            Console.WriteLine($"dataGridView2_CellContentClick {e.RowIndex}".ToUpper());
-            Type cellType = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType();
-            Console.WriteLine($"{cellType}");
-        }
-
-        private void dataGridView2_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
-        {
-            Console.WriteLine($"dataGridView2_CellValidating".ToUpper());
-            Object value = e.FormattedValue;
-            Console.WriteLine($"{value.ToString()}");
-            Console.WriteLine($"{value.GetType()}");
-            // throw new NotImplementedException();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        
         private void dataGridView1_MouseClick(object sender, MouseEventArgs e)
         {
             Console.WriteLine("DATA GRIED VIEW 1: CLICK");
@@ -263,18 +239,17 @@ namespace Praktika
                 
                 // Получаем строку из исходного DataTable
                 DataRow sourceRow = sourceDataTable.Rows[selectedRowIndex];
-                
-
+                selectedRowFromDGV1 = sourceRow;
                 // Создаем новую строку в целевом DataTable
                 DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
                 
                 targetDataTable.Rows.Clear();
-                DataRow targetRow = targetDataTable.NewRow();
+                DataRow targetRow = copy_row_value(sourceRow, targetDataTable.NewRow());
                 // Копируем значения ячеек из исходной строки в новую строку
-                for (int i = 0; i < sourceRow.ItemArray.Length; i++)
-                {
-                    targetRow[i] = sourceRow[i];
-                }
+                // for (int i = 0; i < sourceRow.ItemArray.Length; i++)
+                // {
+                //     targetRow[i] = sourceRow[i];
+                // }
                 // Добавляем новую строку в целевой DataTable
                 
                 targetDataTable.Rows.InsertAt(targetRow, 1);
@@ -283,6 +258,60 @@ namespace Praktika
             }
         }
 
+        private DataRow copy_row_value(DataRow sourceRow, DataRow targetRow)
+        {
+            for (int i = 0; i < sourceRow.ItemArray.Length; i++)
+            {
+                targetRow[i] = sourceRow[i];
+            }
+
+            return targetRow;
+        }
+        
+               
+        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            Console.WriteLine($"dataGridView2_CellContentClick {e.RowIndex}".ToUpper());
+            Type cellType = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType();
+            Console.WriteLine($"{cellType}");
+            
+        }
+
+        private void dataGridView2_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
+        {
+            Console.WriteLine($"dataGridView2_CellValidating".ToUpper());
+            Type columnType = dataGridView2.Columns[e.ColumnIndex].ValueType;
+            Console.WriteLine($"{columnType}");
+        }
+        
+        private void dataGridVIew2_DataError(object? sender, DataGridViewDataErrorEventArgs e)
+        {
+            if (e.Exception.GetType() == typeof(FormatException))
+            {
+                MessageBox.Show("неподходящий формат введенных данных");
+            }
+            else
+            {
+                MessageBox.Show("упс, что-то пошло не так..");
+            }
+
+            dataGridView2.CancelEdit();
+            e.Cancel = true;
+        }
+        
+        private void dataGridView2_CellEndEdit(object? sender, DataGridViewCellEventArgs e)
+        {
+            Console.WriteLine("dataGridView2_CellEndEdit".ToUpper());
+            Button acceptEditBtn = new Button();
+            acceptEditBtn.Name = "acceptEditBtn";
+            acceptEditBtn.Text = "принять изменения";
+            acceptEditBtn.Location = new Point(deleteBtn.Location.X, deleteBtn.Location.Y+30);
+            acceptEditBtn.Size = new Size(deleteBtn.Size.Width, deleteBtn.Size.Height+20);
+            acceptEditBtn.Click += acceptEditBtn_Click;
+            this.Controls.Add(acceptEditBtn);
+        }
+        
+        
         private void clear_dataGridView2()
         {
             DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
@@ -353,6 +382,19 @@ namespace Praktika
             }
             setLoadFormState(false);
             
+        }
+
+        private void update_current_row_in_db()
+        {
+            // TODO(ADD UPDATE ROW IN DB);
+            throw new NotImplementedException("ADD UPDATE ROW IN DB");
+        }
+
+        private void acceptEditBtn_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine($"acceptEditBtn_Click".ToUpper());
+            update_current_row_in_db();
+
         }
 
 

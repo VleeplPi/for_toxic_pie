@@ -52,7 +52,6 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.Size = new Size(674, 226);
             dataGridView1.TabIndex = 0;
-            dataGridView1.RowValidating += dataGridView1_RowValidating;
             dataGridView1.MouseClick += dataGridView1_MouseClick;
             // 
             // car_table
@@ -115,7 +114,8 @@
             dataGridView2.TabIndex = 6;
             dataGridView2.CellValueChanged += dataGridView2_CellValueChanged;
             dataGridView2.CellValidating += dataGridView2_CellValidating;
-            
+            dataGridView2.DataError += dataGridVIew2_DataError;
+            dataGridView2.CellEndEdit += dataGridView2_CellEndEdit;
             
 
             // 
@@ -126,7 +126,7 @@
             label1.Size = new Size(500, 225);
             label1.TabIndex = 7;
             label1.Text = resources.GetString("label1.Text");
-            label1.Click += label1_Click;
+            
             // 
             // deleteBtn
             // 
