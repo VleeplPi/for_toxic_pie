@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mrvli\\Desktop\\projects\\csharp\\praktika\\Praktika.csproj": {}
+    "C:\\Users\\Math-Lab\\Desktop\\projects\\csharp\\for_toxic_pie_0\\Praktika.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mrvli\\Desktop\\projects\\csharp\\praktika\\Praktika.csproj": {
+    "C:\\Users\\Math-Lab\\Desktop\\projects\\csharp\\for_toxic_pie_0\\Praktika.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mrvli\\Desktop\\projects\\csharp\\praktika\\Praktika.csproj",
+        "projectUniqueName": "C:\\Users\\Math-Lab\\Desktop\\projects\\csharp\\for_toxic_pie_0\\Praktika.csproj",
         "projectName": "Praktika",
-        "projectPath": "C:\\Users\\mrvli\\Desktop\\projects\\csharp\\praktika\\Praktika.csproj",
-        "packagesPath": "C:\\Users\\mrvli\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mrvli\\Desktop\\projects\\csharp\\praktika\\obj\\",
+        "projectPath": "C:\\Users\\Math-Lab\\Desktop\\projects\\csharp\\for_toxic_pie_0\\Praktika.csproj",
+        "packagesPath": "C:\\Users\\Math-Lab\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Math-Lab\\Desktop\\projects\\csharp\\for_toxic_pie_0\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mrvli\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Math-Lab\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0-windows"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -64,7 +62,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\Math-Lab\\.dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

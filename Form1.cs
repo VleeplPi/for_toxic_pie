@@ -15,12 +15,62 @@ namespace Praktika
         private string currentTable = "";
         static string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=database\\baza.accdb";
         private ProgressBar progressBar;
+        private bool isLoad = true;
 
         public Form1()
         {
             Console.WriteLine("LOADING FORM");
             InitializeComponent();
+            this.BackColor = System.Drawing.Color.FromArgb(255, 244, 244, 244);
+            hideDataGrid1();
+            hideDataGrid2();
+            addRowBtn.Hide();
+            dataGridView1.ReadOnly = true;
+            isLoad = false;
 
+        }
+
+        private void setLoadFormState(bool isLoad)
+        {
+            if(isLoad)
+            {
+                this.Cursor = Cursors.WaitCursor;
+                
+            }
+            else
+            {
+                this.Cursor = Cursors.Default;
+            }
+
+            this.Enabled = !isLoad;
+        }
+        private void enableTableBtns(bool value)
+        {
+            car_table.Enabled = value;
+            crime_scene_report_table.Enabled = value;
+            education_table.Enabled = value;
+            orgnaziation_table.Enabled = value;
+            interview_table.Enabled = value;
+            
+        }
+        private void hideDataGrid1()
+        {
+            dataGridView1.Hide();
+        }
+
+        private void showDataGrid1()
+        {
+            dataGridView1.Show();
+        }
+        
+        private void hideDataGrid2()
+        {
+            dataGridView2.Hide();
+        }
+
+        private void showDataGrid2()
+        {
+            dataGridView2.Show();
         }
         
         private void showDeleteBtn()
@@ -34,16 +84,12 @@ namespace Praktika
             Console.WriteLine("HIDE DELETE BTN");
             deleteBtn.Hide();
         }
+        
         private void Form1_Load(object sender, EventArgs e)
         {
             label1.Text = "";
             hideDeleteBtn();
             
-        }
-
-        private void change_label_1_text(string text)
-        {
-
         }
 
         private void select_data_from_db_and_display_datagrid(string query)
@@ -68,7 +114,7 @@ namespace Praktika
 
         }
 
-        private void create_empty_copy_current_table()
+        private void create_empty_copy_current_table_in_datagrid2()
         {
             Console.WriteLine("SELECT DATA FROM DB AND DISPLAY DATA GRID");
             string query = "SELECT TOP 1 * FROM " + currentTable;
@@ -92,53 +138,88 @@ namespace Praktika
         private void car_table_Click(object sender, EventArgs e)
         {
 
-            string selectedTable = "car";
-            currentTable = selectedTable;
-
-            string query = "SELECT * FROM " + selectedTable; // твой супер мега запрос к базе данных
-            select_data_from_db_and_display_datagrid(query);
-            create_empty_copy_current_table();
+            if(!isLoad) {
+                setLoadFormState(true);
+                enableTableBtns(false);
+                string selectedTable = "car";
+                currentTable = selectedTable;
+                string query = "SELECT * FROM " + selectedTable; // твой супер мега запрос к базе данных
+                select_data_from_db_and_display_datagrid(query);
+                create_empty_copy_current_table_in_datagrid2();
+                showDataGrid1();
+                showDataGrid2();
+                enableTableBtns(true);
+                setLoadFormState(false);
+            }
             
         }
 
         private void crime_scene_report_table_Click(object sender, EventArgs e)
         {
-            string selectedTable = "crime_scene_report";
-            currentTable = selectedTable;
-            string query = "SELECT * FROM crime_scene_report";
-            select_data_from_db_and_display_datagrid(query);
-            create_empty_copy_current_table();
-            
+            if(!isLoad)
+            {
+                setLoadFormState(true);
+                enableTableBtns(false);
+                string selectedTable = "crime_scene_report";
+                currentTable = selectedTable;
+                string query = "SELECT * FROM crime_scene_report";
+                select_data_from_db_and_display_datagrid(query);
+                create_empty_copy_current_table_in_datagrid2();
+                showDataGrid1();
+                showDataGrid2();
+                enableTableBtns(true);
+                setLoadFormState(false);
+            }
         }
 
         private void education_table_Click(object sender, EventArgs e)
         {
-            string selectedTable = "education";
-            currentTable = selectedTable;
-            string query = "SELECT * FROM education";
-            select_data_from_db_and_display_datagrid(query);
-            create_empty_copy_current_table();
-            
+            if(!isLoad)
+            {
+                setLoadFormState(true);
+                enableTableBtns(false);
+                string selectedTable = "education";
+                currentTable = selectedTable;
+                string query = "SELECT * FROM education";
+                select_data_from_db_and_display_datagrid(query);
+                create_empty_copy_current_table_in_datagrid2();
+                showDataGrid1();
+                showDataGrid2();
+                enableTableBtns(true);
+                setLoadFormState(false);
+            }
         }
 
         private void interview_table_Click(object sender, EventArgs e)
         {
-            string selectedTable = "interview";
-            currentTable = selectedTable;
-            string query = "SELECT * FROM interview";
-            select_data_from_db_and_display_datagrid(query);
-            create_empty_copy_current_table();
-            
+            if(!isLoad)
+            {
+                setLoadFormState(true);
+                enableTableBtns(false);
+                string selectedTable = "interview";
+                currentTable = selectedTable;
+                string query = "SELECT * FROM interview";
+                select_data_from_db_and_display_datagrid(query);
+                create_empty_copy_current_table_in_datagrid2();
+                enableTableBtns(true);
+                setLoadFormState(false);
+            }
         }
 
         private void orgnaziation_table_Click(object sender, EventArgs e)
         {
-            string selectedTable = "orgnaziation";
-            currentTable = selectedTable;
-            string query = "SELECT * FROM orgnaziation";
-            select_data_from_db_and_display_datagrid(query);
-            create_empty_copy_current_table();
-
+            if(!isLoad)
+            {
+                setLoadFormState(true);
+                enableTableBtns(false);
+                string selectedTable = "orgnaziation";
+                currentTable = selectedTable;
+                string query = "SELECT * FROM orgnaziation";
+                select_data_from_db_and_display_datagrid(query);
+                create_empty_copy_current_table_in_datagrid2();
+                enableTableBtns(true);
+                setLoadFormState(false);
+            }
         }
         private void dataGridView1_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
         {
@@ -146,10 +227,20 @@ namespace Praktika
         }
 
 
-        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView2_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            Console.WriteLine($"dataGridView2_CellContentClick {e.RowIndex}".ToUpper());
+            Type cellType = dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType();
+            Console.WriteLine($"{cellType}");
+        }
 
-
+        private void dataGridView2_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
+        {
+            Console.WriteLine($"dataGridView2_CellValidating".ToUpper());
+            Object value = e.FormattedValue;
+            Console.WriteLine($"{value.ToString()}");
+            Console.WriteLine($"{value.GetType()}");
+            // throw new NotImplementedException();
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -247,8 +338,8 @@ namespace Praktika
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
+            setLoadFormState(true);
             DataTable targetDataTable = (DataTable)dataGridView2.DataSource;
-            
             DataRow selectedRow = targetDataTable.Rows[0];
             String idSelectedRow = selectedRow.ItemArray[0].ToString();
             Console.WriteLine($"ID SELECTED ROW {idSelectedRow}");
@@ -260,7 +351,11 @@ namespace Praktika
                 select_data_from_db_and_display_datagrid($"SELECT * FROM {currentTable}");
                 clear_dataGridView2();
             }
+            setLoadFormState(false);
             
         }
+
+
+        
     }
 }

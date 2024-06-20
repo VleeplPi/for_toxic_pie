@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "5F4etgDLvtm5pZkwdhR1SmLEAYteU/5gxR4ZFJkdVxQBsBWh5fobpI5WOPhVzPOblPn/IKYg3d+6l9gESfRh0Q==",
+  "dgSpecHash": "RADq/BC6j5gXu+tfSUPPNMWvmM80EH8n2dtk0yjmAsRIBiEkI1BtbHU5wjTSt9WQZ8l4368Va1xSVgh4jM9MhQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mrvli\\Desktop\\projects\\csharp\\praktika\\Praktika.csproj",
+  "projectFilePath": "C:\\Users\\Math-Lab\\Desktop\\projects\\csharp\\for_toxic_pie_0\\Praktika.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mrvli\\.nuget\\packages\\system.configuration.configurationmanager\\8.0.0\\system.configuration.configurationmanager.8.0.0.nupkg.sha512",
-    "C:\\Users\\mrvli\\.nuget\\packages\\system.data.oledb\\8.0.0\\system.data.oledb.8.0.0.nupkg.sha512",
-    "C:\\Users\\mrvli\\.nuget\\packages\\system.diagnostics.eventlog\\8.0.0\\system.diagnostics.eventlog.8.0.0.nupkg.sha512",
-    "C:\\Users\\mrvli\\.nuget\\packages\\system.diagnostics.performancecounter\\8.0.0\\system.diagnostics.performancecounter.8.0.0.nupkg.sha512",
-    "C:\\Users\\mrvli\\.nuget\\packages\\system.security.cryptography.protecteddata\\8.0.0\\system.security.cryptography.protecteddata.8.0.0.nupkg.sha512"
+    "C:\\Users\\Math-Lab\\.nuget\\packages\\system.configuration.configurationmanager\\8.0.0\\system.configuration.configurationmanager.8.0.0.nupkg.sha512",
+    "C:\\Users\\Math-Lab\\.nuget\\packages\\system.data.oledb\\8.0.0\\system.data.oledb.8.0.0.nupkg.sha512",
+    "C:\\Users\\Math-Lab\\.nuget\\packages\\system.diagnostics.eventlog\\8.0.0\\system.diagnostics.eventlog.8.0.0.nupkg.sha512",
+    "C:\\Users\\Math-Lab\\.nuget\\packages\\system.diagnostics.performancecounter\\8.0.0\\system.diagnostics.performancecounter.8.0.0.nupkg.sha512",
+    "C:\\Users\\Math-Lab\\.nuget\\packages\\system.security.cryptography.protecteddata\\8.0.0\\system.security.cryptography.protecteddata.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }
